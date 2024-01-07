@@ -82,21 +82,11 @@ client.tree.add_command(group)
 
 
 @client.tree.command()
-async def show_roles(interaction: discord.Interaction):
-    guild = client.get_guild(GUILD_ID)
-    print(GUILD_ID)
-    print(guild)
-    role = get(guild.roles, name='Ape')
-    roles = ", ".join([str(r.id) + ' - ' + r.name for r in guild.roles])
-    await interaction.response.send_message(roles, ephemeral=True)
-
-
-@client.tree.command()
 async def show_members(interaction: discord.Interaction):
-    print(client.get_guild(GUILD_ID).members)
+    logger.debug(client.get_guild(GUILD_ID).members)
 
     for m in client.get_guild(GUILD_ID).members:
-        print(m.name, m.id)
+        logger.debug(m.name, m.id)
     await interaction.response.send_message('members', ephemeral=True)
 
 
@@ -115,14 +105,11 @@ async def show_register_date(interaction: discord.Interaction, member: discord.M
 
 
 async def update_roles():
-    print('updating roles...')
+    logger.info('updating roles...')
     managed_roles = database.get_managed_roles(GUILD_ID)
     guild = client.get_guild(GUILD_ID)
     member_roles = database.get_all_roles()
-    # for member_id, roles in database.get_all_roles().items():
     for member in guild.members:
-        # member = guild.get_member(member_id)
-        # print(member.name, member.id, member.roles)
         if member.id in member_roles:
             roles = member_roles[member.id]
             for role_id in roles:
@@ -131,12 +118,12 @@ async def update_roles():
                     await member.add_roles(role)
             for role in member.roles:
                 if role.id not in roles and role.id in managed_roles:
-                    print('removing', role.name, 'from', member.name)
+                    logger.debug('removing', role.name, 'from', member.name)
                     await member.remove_roles(role)
         else:
             for role in member.roles:
                 if role.id in managed_roles:
-                    print('removing', role.name, 'from', member.name)
+                    logger.debug('removing', role.name, 'from', member.name)
                     await member.remove_roles(role)
 
 
@@ -145,7 +132,7 @@ def run_async(coro, *args):
     loop.create_task(coro(*args))
 
 
-schedule.every().minute.do(run_async, update_roles)
+schedule.every(15).minutes.do(run_async, update_roles)
 
 
 @tasks.loop(seconds=1.0)
@@ -155,8 +142,8 @@ async def loop():
 
 @client.event
 async def on_ready():
-    print(f'Logged in as {client.user} (ID: {client.user.id})')
-    print('------')
+    logger.info(f'Logged in as {client.user} (ID: {client.user.id})')
+    logger.info('------')
     try:
         loop.start()
     except RuntimeError:
