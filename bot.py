@@ -1,9 +1,8 @@
 import os
 import discord
 from discord import app_commands
-from discord.utils import get
 from discord.ext import tasks
-
+import logging
 import asyncio
 import schedule
 
@@ -15,7 +14,7 @@ import database
 
 from log_config import setup_logging
 
-logger = setup_logging('bot', 'imagenationbot.log')
+logger = setup_logging('bot', 'imagenationbot.log', logging.DEBUG)
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -107,12 +106,17 @@ async def show_register_date(interaction: discord.Interaction, member: discord.M
 async def update_roles():
     logger.info('updating roles...')
     managed_roles = database.get_managed_roles(GUILD_ID)
+    logger.debug('managed roles: {}'.format(managed_roles))
     guild = client.get_guild(GUILD_ID)
     member_roles = database.get_all_roles()
+    logger.debug('member_roles: {}'.format(member_roles))
+
     for member in guild.members:
         if member.id in member_roles:
             roles = member_roles[member.id]
             for role_id in roles:
+                if role_id not in managed_roles:
+                    continue
                 role = guild.get_role(role_id)
                 if role not in member.roles:
                     await member.add_roles(role)
