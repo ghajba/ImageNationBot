@@ -4,7 +4,7 @@ import nft
 import database
 from log_config import setup_logging
 
-logger = setup_logging('scheduler', 'scheduler.log')
+logger = setup_logging('scheduler', 'imagenationbot.log')
 
 
 def exception_handler(func):

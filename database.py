@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import os
 from log_config import setup_logging
 
-logger = setup_logging('database', 'database.log')
+logger = setup_logging('database', 'imagenationbot.log')
 load_dotenv()
 Base = declarative_base()
 

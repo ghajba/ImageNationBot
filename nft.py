@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 from log_config import setup_logging
 
-logger = setup_logging('nft', 'blockfrost.log')
+logger = setup_logging('nft', 'imagenationbot.log')
 
 load_dotenv()
 
