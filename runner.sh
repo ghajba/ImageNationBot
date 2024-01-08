@@ -4,7 +4,7 @@
 source dc_env/bin/activate
 
 # Start bot.py in the background
-nohup python3 bot.py > imagenationbot.log 2>>&1 &
+nohup python3 bot.py >> imagenationbot.log 2>&1 &
 
 # Start scheduler.py in the background
-nohup python3 scheduler.py > imagenationbot 2>>&1 &
+nohup python3 scheduler.py >> imagenationbot 2>&1 &
