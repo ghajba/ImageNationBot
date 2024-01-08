@@ -134,7 +134,7 @@ def get_all_policies():
     with session_scope() as session:
         roles = session.query(RolesForPolicies).all()
         for role in roles:
-            if role.server_id not in policies:
+            if role.policy_id not in policies:
                 policies[role.policy_id] = {}
             policies[role.policy_id][role.server_id] = role.role_id
     return policies
