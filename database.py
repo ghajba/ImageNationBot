@@ -147,6 +147,7 @@ def get_managed_roles(server_id):
 
 
 def add_holding(user_id, role_id, count):
+    logger.debug(f'adding {role_id} to user {user_id}')
     with session_scope() as session:
         entry = session.query(Holding).filter(Holding.user_id == user_id, Holding.role_id == role_id).first()
         if not entry:
@@ -160,9 +161,8 @@ def reset_holding(user_id, role_ids):
         return
     logger.debug('reset holding', user_id, role_ids)
     with session_scope() as session:
-        logger.debug('reset holding query', session.query(Holding).filter(Holding.user_id == user_id).all())
-        logger.debug('to delete holdings', user_id, role_ids,
-                     session.query(Holding).filter(Holding.user_id == user_id, ~Holding.role_id.in_(role_ids)).all())
+        logger.debug(f'reset holding query {session.query(Holding).filter(Holding.user_id == user_id).all()}')
+        logger.debug(f'to delete holdings {user_id, role_ids} {session.query(Holding).filter(Holding.user_id == user_id, ~Holding.role_id.in_(role_ids)).all()}')
         session.query(Holding).filter(Holding.user_id == user_id, ~Holding.role_id.in_(role_ids)).delete()
 
 

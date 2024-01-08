@@ -22,12 +22,14 @@ def exception_handler(func):
 def task():
     logger.info("Job Executing!")
     policies = database.get_all_policies()
+    logger.debug(f'policies: {policies}')
     addresses = database.get_all_addresses()
     for address in addresses:
         counts = {}
         for asset in nft.assets_for_address(address[0]):
             for p, entry in policies.items():
                 if asset['unit'].startswith(p):
+                    logger.debug(f'policy: {p}, entry: {entry}')
                     for server, role_id in entry.items():
                         if role_id not in counts:
                             counts[role_id] = 0
