@@ -79,7 +79,7 @@ rate_limiter = RateLimiter(max_per_second=10, max_per_day=50000, logger=logger)
 
 @rate_limiter
 def _make_request(url, headers):
-    return _make_request(url, headers=headers)
+    return requests.get(url, headers=headers)
 
 
 def get_addresses(policy):
