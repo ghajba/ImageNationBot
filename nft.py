@@ -90,7 +90,7 @@ def get_addresses(policy):
             if policy in asset['asset']:
                 assets.append(asset['asset'])
             if asset['quantity'] != '1':
-                logger.info(json.dumps(asset, indent=4))
+                logger.debug(json.dumps(asset, indent=4))
     addresses = []
     for asset in assets:
         response = _make_request(asset_address.format(asset), headers=headers)
@@ -104,12 +104,10 @@ def get_addresses(policy):
 
 
 def valid_handle(handle_name):
-    logger.debug('resolving handle', handle_name, handle_name[1:].encode('utf-8').hex())
-    logger.debug(handle_asset_address.format(handle_name[1:].encode('utf-8').hex()))
     response = _make_request(handle_asset_address.format(handle_name[1:].encode('utf-8').hex()), headers=headers)
     if response.status_code != 200 or not response.json():
-        logger.debug(response.json())
-        logger.debug(response.status_code)
+        logger.info(response.json())
+        logger.info(response.status_code)
         return False
     return response.json()[0]['address']
 
