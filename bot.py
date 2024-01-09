@@ -39,6 +39,7 @@ class MyClient(discord.Client):
 
 intents = discord.Intents.default()
 intents.members = True
+intents.messages = True
 client = MyClient(intents=intents)
 
 group = app_commands.Group(name="wallet", description="description")
@@ -111,7 +112,7 @@ async def update_roles():
 
     for guild in client.guilds:
         logger.info(f'updating roles for guild {guild.id}')
-        managed_roles = database.get_managed_roles(GUILD_ID)
+        managed_roles = database.get_managed_roles(guild.id)
         logger.debug('managed roles: {}'.format(managed_roles))
         for member in guild.members:
             if member.id in member_roles:
