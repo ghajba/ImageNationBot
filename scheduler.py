@@ -7,6 +7,18 @@ from log_config import setup_logging
 logger = setup_logging('scheduler', 'imagenationbot.log')
 
 
+def time_execution(function):
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = function(*args, **kwargs)
+        end_time = time.time()
+        execution_time = end_time - start_time
+        logger.info(f"Executed {function.__name__} in {execution_time:.4f} seconds")
+        return result
+
+    return wrapper
+
+
 def exception_handler(func):
     def wrapper(*args, **kwargs):
         try:
@@ -18,8 +30,9 @@ def exception_handler(func):
     return wrapper
 
 
+@time_execution
 @exception_handler
-def task():
+def sync_chain():
     logger.info("Job Executing!")
     policies = database.get_all_policies()
     logger.debug(f'policies: {policies}')
@@ -41,7 +54,7 @@ def task():
 
 
 if __name__ == '__main__':
-    schedule.every().hour.do(task)  # Run every minute
+    schedule.every(15).minutes.do(sync_chain)  # Run every minute
 
     while True:
         schedule.run_pending()
