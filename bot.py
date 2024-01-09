@@ -151,6 +151,10 @@ async def loop():
 async def on_ready():
     logger.info(f'Logged in as {client.user} (ID: {client.user.id})')
     logger.info('------')
+    guilds = []
+    for g in client.guilds:
+        guilds.append((g.id, g.name))
+    logger.debug(f'connected to following guilds: {guilds}')
     try:
         loop.start()
     except RuntimeError:
