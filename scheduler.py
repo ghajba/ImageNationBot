@@ -1,5 +1,7 @@
 import schedule
 import time
+import functools
+
 import nft
 import database
 from log_config import setup_logging
@@ -8,30 +10,30 @@ logger = setup_logging('scheduler', 'imagenationbot.log')
 
 
 def time_execution(function):
+    @functools.wraps(function)
     def wrapper(*args, **kwargs):
         start_time = time.time()
         result = function(*args, **kwargs)
         end_time = time.time()
-        execution_time = end_time - start_time
-        logger.info(f"Executed {function.__name__} in {execution_time:.4f} seconds")
+        logger.info(f"Function {function.__name__} took {end_time - start_time} seconds to execute")
         return result
 
     return wrapper
 
 
-def exception_handler(func):
+def exception_handler(function):
+    @functools.wraps(function)
     def wrapper(*args, **kwargs):
         try:
-            return func(*args, **kwargs)
+            return function(*args, **kwargs)
         except Exception as e:
-            # Log the exception or take necessary actions
-            logger.error(f"An error occurred in {func.__name__}: {e}")
+            logger.error(f"Exception in function {function.__name__}: {e}")
 
     return wrapper
 
 
-@time_execution
 @exception_handler
+@time_execution
 def sync_chain():
     logger.info("Job Executing!")
     policies = database.get_all_policies()
