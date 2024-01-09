@@ -54,6 +54,7 @@ async def add_wallet(interaction: discord.Interaction, address_or_handle: str):
         await interaction.response.send_message(f'Please provide a valid address or ADA handle', ephemeral=True)
         return
     database.add_address(interaction.user.id, address, stake)
+    database.add_user(interaction.user.id, interaction.user.name, interaction.user.nick, interaction.user.discriminator)
     await interaction.response.send_message(f'Your wallet {address_or_handle} will be registered soon.', ephemeral=True)
 
 

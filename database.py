@@ -26,6 +26,17 @@ def session_scope():
         session.close()
 
 
+class User(Base):
+    __tablename__ = 'users'
+    user_id = Column(Integer, primary_key=True)
+    name = Column(String)
+    nick = Column(String)
+    discriminator = Column(String)
+
+    def __repr__(self):
+        return f'<User(user_id={self.user_id}, nick={self.nick}, name={self.name}, discriminator={self.discriminator})>'
+
+
 class Address(Base):
     __tablename__ = 'addresses'
 
@@ -74,6 +85,18 @@ engine = create_engine(os.getenv('DATABASE_URL'))
 Base.metadata.create_all(engine)
 session_factory = sessionmaker(bind=engine)
 Session = scoped_session(session_factory)
+
+
+def add_user(user_id, name, nick, discriminator):
+    with session_scope() as session:
+        user = session.query(User).filter(User.user_id == user_id).first()
+
+        if user is None:
+            user = User(user_id=user_id)
+        user.name = name
+        user.nick = nick
+        user.discriminator = discriminator
+        session.add(user)
 
 
 def add_address(user_id, address, stake_address):
