@@ -14,7 +14,7 @@ import database
 
 from log_config import setup_logging
 
-logger = setup_logging('bot', 'imagenationbot.log', logging.DEBUG)
+logger = setup_logging('bot', 'imagenationbot.log')
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
