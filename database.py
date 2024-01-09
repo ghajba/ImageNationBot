@@ -159,7 +159,7 @@ def add_holding(user_id, role_id, count):
 def reset_holding(user_id, role_ids):
     if not role_ids:
         return
-    logger.debug('reset holding', user_id, role_ids)
+    logger.debug(f'reset holding {user_id} {role_ids}')
     with session_scope() as session:
         logger.debug(f'reset holding query {session.query(Holding).filter(Holding.user_id == user_id).all()}')
         logger.debug(f'to delete holdings {user_id, role_ids} {session.query(Holding).filter(Holding.user_id == user_id, ~Holding.role_id.in_(role_ids)).all()}')
