@@ -105,30 +105,32 @@ async def show_register_date(interaction: discord.Interaction, member: discord.M
 
 async def update_roles():
     logger.info('updating roles...')
-    managed_roles = database.get_managed_roles(GUILD_ID)
-    logger.debug('managed roles: {}'.format(managed_roles))
-    guild = client.get_guild(GUILD_ID)
+    # guild = client.get_guild(GUILD_ID)
     member_roles = database.get_all_roles()
     logger.debug('member_roles: {}'.format(member_roles))
 
-    for member in guild.members:
-        if member.id in member_roles:
-            roles = member_roles[member.id]
-            for role_id in roles:
-                if role_id not in managed_roles:
-                    continue
-                role = guild.get_role(role_id)
-                if role not in member.roles:
-                    await member.add_roles(role)
-            for role in member.roles:
-                if role.id not in roles and role.id in managed_roles:
-                    logger.debug('removing', role.name, 'from', member.name)
-                    await member.remove_roles(role)
-        else:
-            for role in member.roles:
-                if role.id in managed_roles:
-                    logger.debug('removing', role.name, 'from', member.name)
-                    await member.remove_roles(role)
+    for guild in client.guilds:
+        logger.info(f'updating roles for guild {guild.id}')
+        managed_roles = database.get_managed_roles(GUILD_ID)
+        logger.debug('managed roles: {}'.format(managed_roles))
+        for member in guild.members:
+            if member.id in member_roles:
+                roles = member_roles[member.id]
+                for role_id in roles:
+                    if role_id not in managed_roles:
+                        continue
+                    role = guild.get_role(role_id)
+                    if role not in member.roles:
+                        await member.add_roles(role)
+                for role in member.roles:
+                    if role.id not in roles and role.id in managed_roles:
+                        logger.debug('removing', role.name, 'from', member.name)
+                        await member.remove_roles(role)
+            else:
+                for role in member.roles:
+                    if role.id in managed_roles:
+                        logger.debug('removing', role.name, 'from', member.name)
+                        await member.remove_roles(role)
 
 
 def run_async(coro, *args):
