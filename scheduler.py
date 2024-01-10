@@ -32,8 +32,8 @@ def exception_handler(function):
     return wrapper
 
 
-@exception_handler
 @time_execution
+@exception_handler
 def sync_chain():
     logger.info("Job Executing!")
     policies = database.get_all_policies()
@@ -42,7 +42,7 @@ def sync_chain():
     for user_id, addresses in address_groups.items():
         counts = {}
         for address in addresses:
-            for asset in nft.assets_for_address(address[0]):
+            for asset in nft.assets_for_address(address):
                 for p, entry in policies.items():
                     if asset['unit'].startswith(p):
                         logger.debug(f'policy: {p}, entry: {entry}')
