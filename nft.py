@@ -68,7 +68,7 @@ class RateLimiter:
                 self.logger.debug(f'{self.calls_made_today} calls made today')
                 return result
             except Exception as e:
-                raise e
+                logger.error(f"Exception in function {f.__name__}: {e}")
 
         return wrapped_f
 
@@ -79,6 +79,7 @@ rate_limiter = RateLimiter(max_per_second=10, max_per_day=50000, logger=logger)
 
 @rate_limiter
 def _make_request(url, headers):
+    logger.debug(f'making request {url}')
     return requests.get(url, headers=headers)
 
 
