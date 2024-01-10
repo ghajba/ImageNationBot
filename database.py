@@ -112,7 +112,7 @@ def add_address(user_id, address, stake_address):
 def get_all_addresses():
     with session_scope() as session:
         addresses = session.query(Address).all()
-        grouped = defaultdict([])
+        grouped = defaultdict(list)
         for a in addresses:
             grouped[a.user_id].append(a.stake_address)
         return grouped

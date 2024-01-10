@@ -28,6 +28,7 @@ def exception_handler(function):
             return function(*args, **kwargs)
         except Exception as e:
             logger.error(f"Exception in function {function.__name__}: {e}")
+            return None
 
     return wrapper
 
@@ -57,7 +58,7 @@ def sync_chain():
 
 
 if __name__ == '__main__':
-    schedule.every(15).minutes.do(sync_chain)  # Run every minute
+    schedule.every(20).minutes.do(sync_chain)  # Run every minute
 
     while True:
         schedule.run_pending()

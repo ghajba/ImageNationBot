@@ -42,8 +42,8 @@ class RateLimiter:
         self.current_day = datetime.now(timezone.utc).date()
         self.logger = logger
 
-    def __call__(self, f):
-        @functools.wraps(f)
+    def __call__(self, function):
+        @functools.wraps(function)
         def wrapped_f(*args, **kwargs):
             today = datetime.now(timezone.utc).date()
 
@@ -62,13 +62,14 @@ class RateLimiter:
                 time.sleep(0.01)
 
             try:
-                result = f(*args, **kwargs)
+                result = function(*args, **kwargs)
                 self.calls_made_today += 1
                 self.last_called = time.time()
                 self.logger.debug(f'{self.calls_made_today} calls made today')
                 return result
             except Exception as e:
-                raise e
+                logger.error(f"Exception in function {function.__name__}: {e}")
+                return None
 
         return wrapped_f
 
