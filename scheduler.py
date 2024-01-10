@@ -38,20 +38,21 @@ def sync_chain():
     logger.info("Job Executing!")
     policies = database.get_all_policies()
     logger.debug(f'policies: {policies}')
-    addresses = database.get_all_addresses()
-    for address in addresses:
+    address_groups = database.get_all_addresses()
+    for user_id, addresses in address_groups.items():
         counts = {}
-        for asset in nft.assets_for_address(address[0]):
-            for p, entry in policies.items():
-                if asset['unit'].startswith(p):
-                    logger.debug(f'policy: {p}, entry: {entry}')
-                    for server, role_id in entry.items():
-                        if role_id not in counts:
-                            counts[role_id] = 0
-                        counts[role_id] += 1
+        for address in addresses:
+            for asset in nft.assets_for_address(address[0]):
+                for p, entry in policies.items():
+                    if asset['unit'].startswith(p):
+                        logger.debug(f'policy: {p}, entry: {entry}')
+                        for server, role_id in entry.items():
+                            if role_id not in counts:
+                                counts[role_id] = 0
+                            counts[role_id] += 1
         for role, count in counts.items():
-            database.add_holding(address[1], role, count)
-        database.reset_holding(address[1], list(counts.keys()))
+            database.add_holding(user_id, role, count)
+        database.reset_holding(user_id, list(counts.keys()))
     database.clean_up_holdings()
 
 

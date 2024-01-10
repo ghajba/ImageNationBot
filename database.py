@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, String, select
 from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base
 from sqlalchemy.sql import exists
 from contextlib import contextmanager
+from collections import defaultdict
 
 from dotenv import load_dotenv
 import os
@@ -111,7 +112,10 @@ def add_address(user_id, address, stake_address):
 def get_all_addresses():
     with session_scope() as session:
         addresses = session.query(Address).all()
-        return [(a.stake_address, a.user_id) for a in addresses]
+        grouped = defaultdict([])
+        for a in addresses:
+            grouped[a.user_id].append(a.stake_address)
+        return grouped
 
 
 def get_addresses(user_id):
